@@ -1,10 +1,10 @@
-struct S
+struct ITarget
 {
     static constexpr int ID = 42;
 };
 
 template<typename... Ts>
-struct Processor
+struct Factory
 {
     void process(int filter)
     {
@@ -26,13 +26,13 @@ struct Processor
     }
 };
 
-struct T : Processor<T, S>
+struct Implementation : Factory<Implementation, ITarget>
 {
     static constexpr int ID = 10;
 };
 
 int main()
 {
-    T{}.process(42);
-    Processor<S>{}.process(42);
+    Implementation{}.process(42);
+    Factory<ITarget>{}.process(42);
 }
