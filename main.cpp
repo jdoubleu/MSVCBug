@@ -1,38 +1,47 @@
-struct ITarget
+#include <combaseapi.h>
+
+// {2A82E6CD-6E11-45F0-B61C-D77592F776B5}
+static const GUID IID_ITarget = { 0x2a82e6cd, 0x6e11, 0x45f0, { 0xb6, 0x1c, 0xd7, 0x75, 0x92, 0xf7, 0x76, 0xb5 } };
+
+struct __declspec(uuid("2A82E6CD-6E11-45F0-B61C-D77592F776B5")) ITarget
 {
-    static constexpr int ID = 42;
 };
 
 template<typename... Ts>
-struct Factory
+struct Factory : Ts...
 {
-    void process(int filter)
+    virtual bool process(const IID& filter, void** ppvObject)
     {
-        auto ptr = ([&] {
+        *ppvObject = ([&] {
             void* inner{ nullptr };
 
             (([&]<typename X> {
-                if (X::ID == filter)
+                if (__uuidof(X) == filter)
                     inner = new X;
             }).template operator()<Ts>(), ...);
 
             return inner;
         })();
 
-        if (ptr != nullptr)
+        if (*ppvObject == nullptr)
         {
-            delete ptr;
+            return false;
         }
+
+        return true;
     }
 };
 
-struct Implementation : Factory<Implementation, ITarget>
+struct Implementation : Factory<ITarget>
 {
-    static constexpr int ID = 10;
 };
 
 int main()
 {
-    Implementation{}.process(42);
-    Factory<ITarget>{}.process(42);
+    void* object;
+    Implementation{}.process(IID_ITarget, &object);
+    delete object;
+
+    Factory<ITarget>{}.process(IID_ITarget, &object);
+    delete object;
 }
