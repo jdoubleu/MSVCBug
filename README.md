@@ -1,4 +1,6 @@
 # MSVC frontend crash reproduction
+https://developercommunity.visualstudio.com/t/Frontend-crash-when-compiling-nested-tem/10612923
+
 This repository reproduces a MSVC compiler crash in the frontend:
 
 ```
@@ -16,6 +18,8 @@ This repository reproduces a MSVC compiler crash in the frontend:
 ```
 
 You can also observe this in the GitHub CI: https://github.com/jdoubleu/MSVCBug/actions/runs/8224493505/job/22488396152#step:4:31
+
+GCC and Clang are able to compile the code: https://godbolt.org/z/ajvj5jh68
 
 ## Origin
 This crash might be caused by the following properties, in combination:
